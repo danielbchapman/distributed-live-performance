@@ -8,23 +8,32 @@
   "license": "GPL-3.0",
   "private": true,
   "scripts": {
-    "start": "webpack-dev-server --open --mode development",
+    "start": "webpack-dev-server --config ./webpack.config.js --mode development --open",
     "build": "webpack --mode production"
   },
   "dependencies": {
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
+    "@material-ui/styles": "^4.10.0",
+    "connected-react-router": "^6.8.0",
+    "electron": "6.1.7",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-redux": "^7.2.1",
-    "redux-thunk": "^2.3.0"
+    "redux": "^4.0.5",
+    "redux-thunk": "^2.3.0",
+    "websocket": "^1.0.32"
   },
   "devDependencies": {
+    "@babel/cli": "^7.11.6",
+    "@babel/core": "^7.11.6",
+    "@babel/plugin-transform-runtime": "^7.11.5",
     "@babel/preset-env": "^7.11.5",
     "@babel/preset-react": "^7.10.4",
     "babel-loader": "^8.1.0",
-    "webpack": "^5.0.0",
-    "webpack-cli": "^4.0.0",
+    "fs-extra": "^9.0.1",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0"
   }
 }
