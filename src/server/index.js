@@ -22,7 +22,7 @@ wsServer.on('connection', socket => {
 
 wsServer.on('message', socket => {
   console.log(JSON.stringify(socket, null, 2))
-  socket.send('yo ho ho')
+  wsServer.send()
 })
 server.on('upgrade', (request, socket, head) => {
   wsServer.handleUpgrade(request, socket, head, socket => {
