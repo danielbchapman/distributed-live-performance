@@ -1,9 +1,10 @@
 import E131 from './e131Sender'
 import ArtNet from './artnetSender'
+import artnetSender from './artnetSender'
 
 let localE131 = null
 let localArtnet = null
-let interfaceAddress = '0.0.0.0'
+let interfaceAddress = null
 
 export const setInterface = (address, useE131 = true, useArtNet = true) => {
   ArtNet.start(interfaceAddress)
@@ -33,7 +34,7 @@ export const setEnableE131 = (bool) => {
  */
 export const send = (universe = 1, packet = []) => {
   if(localArtnet) {
-    //send artnet
+    artnetSender.send(universe - 1, packet)
   }
 
   if(localE131) {
@@ -64,6 +65,8 @@ export const shutdown = () => {
 }
 export default {
   setInterface,
+  setEnableE131,
+  setEnableArtNet,
   send,
   sendE131,
   sendArtNet,

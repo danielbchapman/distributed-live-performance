@@ -2,8 +2,8 @@
 const e131 = require('e131')
 let client = null
 
-export const start = (port) => {
-  client = new e131.Client(port)
+export const start = (address = '0.0.0.0') => {
+  client = new e131.Client(address)
 }
 
 export const send = (universe = 1, packet = []) => {

@@ -3,7 +3,9 @@ import { expect } from 'chai'
 import DMX from './../src/electron/dmx'
 
 before( () => {
-  DMX.setInterface('0.0.0.0')
+  DMX.setInterface()
+  //DMX.setInterface('192.168.86.149') //null is 0.0.0.0 
+  DMX.setEnableE131(false)//kill sACN
 })
 
 describe("Major Protocol Tests", () => {
@@ -27,7 +29,7 @@ describe("Major Protocol Tests", () => {
     })
 
     it("Sends a blackout after 5 seconds", (done) => {
-      DMX.setInterface('0.0.0.0')
+      //DMX.setInterface('0.0.0.0')
       DMX.send(1, [255, 128, 16])
       setTimeout(()=>{
         const test = DMX.send(1, [0,0,0])
