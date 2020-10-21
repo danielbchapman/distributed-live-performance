@@ -4,10 +4,9 @@ let artnet = null
 
 export const send = (universe, packet = []) => {
   if(artnet) {
-    console.log(`SENDING ${universe}: ${packet.length}`)
     artnet.set(universe, 1, packet)
   } else {
-    console.log(`SENDING ${universe}: ${packet.length}`)
+    console.log(`[ArtnetDisabled] ${universe}: ${packet.length}`)
   }
 }
 
