@@ -6,6 +6,7 @@ import { push } from 'connected-react-router'
 import {
   Button
 } from '@material-ui/core'
+import RemoteConnection from './RemoteConnection'
 
 const theme = createMuiTheme({
   palette: {
@@ -44,15 +45,18 @@ class Layout extends React.Component {
             <ul>
               <li>{ navLink('/', 'Home', this.props.dispatch) }</li>
               <li>{ navLink('/cues', 'Cues', this.props.dispatch) }</li>
+              <li>{ navLink('/setup', 'Setup', this.props.dispatch) }</li>
               <li>{ navLink('/about', 'About', this.props.dispatch) }</li>
             </ul>
           </nav>
           <div className="main-content">
             { children }
           </div>
-          <footer>
-            This is the footer for the project
-          </footer>
+
+          <RemoteConnection />
+          <div>
+            DEBUG
+          </div>
         </div>
       </ThemeProvider>
     )

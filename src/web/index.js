@@ -7,6 +7,7 @@ import rootCreate from './reducers/root'
 import Home from './App'
 import Cues from './cues'
 import About from './about'
+import Setup from './setup'
 import { createBrowserHistory } from 'history'
 import { Router, Route, Switch } from 'react-router'
 import { routerMiddleware, ConnectedRouter } from 'connected-react-router'
@@ -37,6 +38,7 @@ const store = createStore(
 )
 
 window.REDUX_STORE = store
+window.WEBSOCKET_CLIENT = null 
 
 ReactDOM.render(
   <Provider store={store}>
@@ -44,6 +46,7 @@ ReactDOM.render(
       <Switch>
         <Route path="/about" component={About} />
         <Route path="/cues" component={Cues} />
+        <Route path="/setup" component={Setup} />
         <Route path="/" component={Home} />
       </Switch>
     </ConnectedRouter>
