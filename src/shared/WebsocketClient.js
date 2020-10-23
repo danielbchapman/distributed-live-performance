@@ -1,3 +1,4 @@
+import { Web } from "@material-ui/icons"
 
 var num = 1
 
@@ -6,13 +7,8 @@ class WebsocketClient {
     this.address = address
     this.port = port
     this.ws = null
-    this.heartbeatTimeout = null
-    this.heartbeatInterval = null
-    this.shutdown = false
-    this.onConnectHandler = readyHandler
-    this.handleClose.bind(this)
-    this.connect.bind(this)
-
+    this.doShutdown = false
+    this.pingTimeout = null
   }
 
   ready() {
@@ -27,82 +23,65 @@ class WebsocketClient {
   }
 
   heartbeat() {
-    clearTimeout(this.heartbeatTimeout)
-    if(!this.shutdown) {
+    console.log(this.pingTimeout)
+    clearTimeout(this.pingTimeout)
+    if(!this.shutdownBool && this.ws) {
+      this.ws.send('heartbeat')
       console.log(`Client Heartbeat # ${num}`)
-      this.heartbeatTimeout = setTimeout( () => {
-        this.close()
-        this.connect()
-      }, 5000 + 1000)
+      this.pingTimeout = setTimeout( () => {
+        this.ws.close()
+      }, 5000 + 1000) //expects response or it resurrects
+      console.log(`NewTimeout->${this.pingTimeout}`)
     }
   }
 
-  connect() {
-    clearTimeout(this.heartbeatTimeout)
+  connect(onReady) {
+    if(this.ws) {
+      try{
+          this.ws.close()
+      } catch (e) {
+        console.log('[WebsocketClient]::Closing Socket before opening')
+        console.log(e)
+      }
+    }
 
-    this.shutdown = false
+    this.shutdownBool = false
     this.ws = new WebSocket(`ws://${this.address}:${this.port}`)
     const client = this.ws
 
-    client.addEventListener('open', event => {
-      client.send(`Hi I connected\n->"${JSON.stringify(event, null, 2)}"`)
+    client.onopen = (event) => {
       this.heartbeat()
-
-      if(this.onConnectHandler) {
-        this.onConnectHandler(true)
+      client.send(`Hi I connected\n->"${JSON.stringify(event, null, 2)}"`)
+      if(onReady) {
+        onReady()
       }
-    })
+    }
+
+    client.onclose = (event) => {
+      if(!this.doShutdown) {
+        console.log('[WebsocketClient] Socket Closing Unexpectedly. Attempting Reconnect')
+        setTimeout(()=>{this.connect()}, 1000)
+      } else {
+        console.log('[WebsocketClient] Socket Closing As Requested')
+      }
+    }
+
+    client.onerror = (err) => {
+      console.log('[WebsocketClient] OnError, Closing.')
+      console.log(err)
+    }
 
     client.addEventListener('message', this.handleMessage)
-    client.addEventListener('close', (evt) => { this.handleClose(evt) })
   }
 
   handleMessage(event) {
     console.log(`Message from server: ${event.data}`)
   }
 
-  close() {
-    this.shutdown = true
-    clearTimeout(this.heartbeatTimeout)
-    this.handleClose()
-  }
-
-  handleClose(event) {
-    if(this.onConnectHandler) {
-      this.onConnectHandler(false)
-    }
-    clearTimeout(this.heartbeatTimeout)
-    if(this.ws) {
-      console.log(`[WebsocketClient::handleClose] ${this.ws.readyState} 0-CONNECTING 1-OPEN 2-CLOSING 3-CLOSED`)
-    }
-    
-    if(!this.shutdown) {
-      clearTimeout(this.heartbeatTimeout)
-      try {
-        this.ws.onclose = ()=>{}
-        this.ws.close()
-      } catch (e) {
-        console.log(e)
-      }
-      this.ws = null
-      this.connect()
-    } else {
-      clearTimeout(this.heartbeatTimeout)
-      try {
-        this.ws.onclose = ()=>{}
-        this.ws.close()
-      } catch (e) {
-        console.log(e)
-      }
-      this.ws = null
-      this.shutdown = false
-      console.log(`[WebsocketClient] Shutting Down`)
-    }
-  }
-
   shutdown() {
+    this.doShutdown = true
+    console.log(`[WebsocketClient] Shutting down socket->${JSON.stringify(this.ws)}`)
     if(this.ws) {
-      this.shutdown = true
       this.ws.close()
     }
   }

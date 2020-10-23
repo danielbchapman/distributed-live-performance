@@ -11,46 +11,43 @@ class Cues extends React.Component {
   constructor(props) {
     super(props)
     this.didConnect = false
-    this.client = null
 
     this.state = {
-      ready: false
+      ready: false,
+      client: null,
     }
   }
   
+  componentDidMount() {
+    this.setup()
+  }
+
   disconnect() {
-    if(this.client) {
-      this.client.close()
-      this.client = null
+    if(this.state.client) {
+      this.state.client.shutdown()
+    }
+  }
+
+  setup(address, port) {
+    if(!this.state.client) {
+      const client = new WebsocketClient('127.0.0.1', 9001)
+      client.onConnectHandler = (ready) => {
+        this.setState({ready: ready})
+        client.test(`I'm a test ${Date.now()}`)
+      }
+
+      this.setState({
+        client: client
+      })
     }
   }
 
   websocketConnect() {
-    if(!this.client) {
-      this.client = new WebsocketClient('127.0.0.1', 9001, (ready) => {
-        this.setState({ready: ready})
-      })
-      this.client.connect()
+    if(!this.state.client) {
+      alert('SETUP INCOMPLETE')
+    } else {
+      this.state.client.connect()
     }
-    this.client.test(`I'm a test ${Date.now()}`)
-
-    // this.client.
-    // if(!this.didConnect) {
-    //   this.client = new WebSocket('ws://localhost:9001')
-    //   let client = this.client
-
-    //   client.addEventListener('open', event => {
-    //     client.send('Hi I connected')
-    //   })
-
-    //   client.addEventListener('message', event => {
-    //     alert(`Message from server: ${event.data}`)
-    //   })
-
-    //   this.didConnect = true
-    // } else {
-    //   this.client.send('Yo Yo Yo.')
-    // }
   }
 
   render() {

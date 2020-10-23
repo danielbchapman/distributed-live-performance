@@ -48,6 +48,8 @@ wsServer.on('connection', (client) => {
   client.on('pong', heartbeat)
   client.on('close', () => {
     console.log('CLIENT CLOSE')
+    client.isAlive = false
+    client.terminate()
   })
   client.on('message', message => console.log(message) )
   client.send('server-message')
