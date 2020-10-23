@@ -1,4 +1,3 @@
-import { SignalCellularNullTwoTone } from "@material-ui/icons"
 
 var num = 1
 
@@ -7,7 +6,7 @@ class WebsocketClient {
     this.address = address
     this.port = port
     this.ws = null
-    this.heatbeatTimeout = null
+    this.heartbeatTimeout = null
     this.heartbeatInterval = null
     this.shutdown = false
     this.onConnectHandler = readyHandler
@@ -28,17 +27,18 @@ class WebsocketClient {
   }
 
   heartbeat() {
-    clearTimeout(this.heatbeatTimeout)
-    console.log(`Client Heartbeat # ${num}`)
-    this.heatbeatTimeout = setTimeout( () => {
-      this.close()
-      this.connect()
-    }, 5000 + 1000)
+    clearTimeout(this.heartbeatTimeout)
+    if(!this.shutdown) {
+      console.log(`Client Heartbeat # ${num}`)
+      this.heartbeatTimeout = setTimeout( () => {
+        this.close()
+        this.connect()
+      }, 5000 + 1000)
+    }
   }
 
   connect() {
-    clearTimeout(this.heatbeatTimeout)
-    clearInterval(this.heartbeatInterval)
+    clearTimeout(this.heartbeatTimeout)
 
     this.shutdown = false
     this.ws = new WebSocket(`ws://${this.address}:${this.port}`)
@@ -47,9 +47,6 @@ class WebsocketClient {
     client.addEventListener('open', event => {
       client.send(`Hi I connected\n->"${JSON.stringify(event, null, 2)}"`)
       this.heartbeat()
-      this.heartbeatInterval = setInterval(()=>{
-        client.send('--heartbeat--')
-      }, 1000)
 
       if(this.onConnectHandler) {
         this.onConnectHandler(true)
@@ -58,9 +55,6 @@ class WebsocketClient {
 
     client.addEventListener('message', this.handleMessage)
     client.addEventListener('close', (evt) => { this.handleClose(evt) })
-    client.addEventListener('--heartbeat--', event => {
-      this.heartbeat()
-    })
   }
 
   handleMessage(event) {
@@ -69,6 +63,7 @@ class WebsocketClient {
 
   close() {
     this.shutdown = true
+    clearTimeout(this.heartbeatTimeout)
     this.handleClose()
   }
 
@@ -76,21 +71,31 @@ class WebsocketClient {
     if(this.onConnectHandler) {
       this.onConnectHandler(false)
     }
+    clearTimeout(this.heartbeatTimeout)
     if(this.ws) {
       console.log(`[WebsocketClient::handleClose] ${this.ws.readyState} 0-CONNECTING 1-OPEN 2-CLOSING 3-CLOSED`)
     }
     
     if(!this.shutdown) {
+      clearTimeout(this.heartbeatTimeout)
+      try {
+        this.ws.onclose = ()=>{}
+        this.ws.close()
+      } catch (e) {
+        console.log(e)
+      }
       this.ws = null
-      clearTimeout(this.heatbeatTimeout)
-      clearInterval(this.heartbeatInterval)
       this.connect()
     } else {
+      clearTimeout(this.heartbeatTimeout)
+      try {
+        this.ws.onclose = ()=>{}
+        this.ws.close()
+      } catch (e) {
+        console.log(e)
+      }
       this.ws = null
       this.shutdown = false
-      clearTimeout(this.heatbeatTimeout)
-      clearInterval(this.heartbeatInterval)
-
       console.log(`[WebsocketClient] Shutting Down`)
     }
   }
