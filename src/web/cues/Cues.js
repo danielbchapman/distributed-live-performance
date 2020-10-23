@@ -5,7 +5,7 @@ import {
 } from '@material-ui/core'
 
 import WebsocketClient from './../../shared/WebsocketClient'
-
+const SERVER = 'http://localhost:9000'
 class Cues extends React.Component {
 
   constructor(props) {
@@ -22,20 +22,33 @@ class Cues extends React.Component {
     this.setup()
   }
 
+  replicate() {
+    fetch(SERVER + '/api/replicate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        body: "{}"      
+      }
+    })
+    .then(res => {})
+    .catch(error => {
+      alert(error)
+    })
+  }
+
   disconnect() {
     if(this.state.client) {
       this.state.client.shutdown()
+      this.setState({
+        ready: false,
+      })
     }
   }
 
   setup(address, port) {
     if(!this.state.client) {
-      const client = new WebsocketClient('127.0.0.1', 9001)
-      client.onConnectHandler = (ready) => {
-        this.setState({ready: ready})
-        client.test(`I'm a test ${Date.now()}`)
-      }
-
+      const client = new WebsocketClient('127.0.0.1', 9001, 'TEST_USER', 'TEST_PASSWORD', window.REDUX_STORE)
+      
       this.setState({
         client: client
       })
@@ -46,7 +59,13 @@ class Cues extends React.Component {
     if(!this.state.client) {
       alert('SETUP INCOMPLETE')
     } else {
-      this.state.client.connect()
+      const onConnect = ()=>{
+        this.setState({
+          ready: true
+        })
+        this.state.client.send(`I'm a test ${Date.now()}`)
+      }
+      this.state.client.connect(onConnect)
     }
   }
 
@@ -71,6 +90,15 @@ class Cues extends React.Component {
           }}
         >
           Disconnect
+        </Button>
+
+        <Button
+          variant='contained'
+          onClick={x => {
+            this.replicate()
+          }}
+        >
+          REPLICATE
         </Button>
 
         <div>

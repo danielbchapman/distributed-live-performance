@@ -20,6 +20,9 @@ module.exports = {
     compress: true,
     hot: true,
     port: 9000,
-    historyApiFallback: true
+    historyApiFallback: true,
+    proxy: {
+      '/api': 'http://localhost:9001',
+    }
   }
 };

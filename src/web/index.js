@@ -36,6 +36,7 @@ const store = createStore(
   )
 )
 
+window.REDUX_STORE = store
 
 ReactDOM.render(
   <Provider store={store}>
