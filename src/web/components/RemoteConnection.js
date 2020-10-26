@@ -9,10 +9,12 @@ class RemoteConnection extends React.Component {
     return (
       <footer 
         style={{
+          flex: 0,
+          minHeight: 48,
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
-          background: 'rgb(48,0,48)',
+          backgroundColor: window.theme.palette.primary.dark,
         }}
       >
         <div
