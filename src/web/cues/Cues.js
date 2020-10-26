@@ -71,6 +71,11 @@ class Cues extends React.Component {
 
   render() {
     const connected = this.state.ready
+    const array = []
+    for(let i = 0 ; i < 100; i++) {
+      array.push('New Element ' + i)
+    }
+
     return (
       <Layout>
         <h1>CUE SHEET</h1>
@@ -104,6 +109,15 @@ class Cues extends React.Component {
         <div>
           { connected ? 'CONNECTED' : 'DISCONNECTED'}
         </div>
+
+        <h2>Scroll Test</h2>
+        <ul>
+          { 
+            array.map( (x,i) => {
+              return (<li key={i}>{x}</li>)
+            }) 
+          }
+        </ul>
       </Layout>
     )
   }

@@ -14,8 +14,13 @@ const theme = createMuiTheme({
   }
 })
 
+window.theme = theme
+
 const styleOverride = {
-  
+  display: 'flex',
+  flexDirection: 'column',
+  width: '100%',
+  height: '100%',
 }
 
 const navLink = (to, text, dispatch) => {
@@ -31,6 +36,9 @@ const navLink = (to, text, dispatch) => {
   )
 }
 
+const listItemStyle = {
+  display: 'inline'
+}
 class Layout extends React.Component {
   render() {
     const children = this.props.children
@@ -41,22 +49,41 @@ class Layout extends React.Component {
           className="react-container"
           style={styleOverride}
         >
-          <nav>
-            <ul>
-              <li>{ navLink('/', 'Home', this.props.dispatch) }</li>
-              <li>{ navLink('/cues', 'Cues', this.props.dispatch) }</li>
-              <li>{ navLink('/setup', 'Setup', this.props.dispatch) }</li>
-              <li>{ navLink('/about', 'About', this.props.dispatch) }</li>
-            </ul>
+          <nav
+            style={{
+              flex:0,
+              minHeight: 36,
+              display: 'flex',
+              flexDirection: 'row',
+              paddingLeft: 24,
+              paddingRight: 24,
+              paddingTop: 6,
+              paddingBottom: 4,
+              backgroundColor: window.theme.palette.primary.dark,
+            }}
+        >
+            { navLink('/', 'Home', this.props.dispatch) }
+            <div
+              style={{
+                flex: 1,
+              }}
+            >
+            </div>
+            { navLink('/cues', 'Cues', this.props.dispatch) }
+            { navLink('/setup', 'Setup', this.props.dispatch) }
+            { navLink('/about', 'About', this.props.dispatch) }
           </nav>
-          <div className="main-content">
+          <div 
+            style={{
+              flex: 1,
+              overflowY: 'auto',
+            }}
+            className="main-content"
+          >
             { children }
           </div>
 
           <RemoteConnection />
-          <div>
-            DEBUG
-          </div>
         </div>
       </ThemeProvider>
     )
