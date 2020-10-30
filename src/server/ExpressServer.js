@@ -18,6 +18,10 @@ export default (socketPort, apiPort, secret, file) => {
   console.log(`----------file ${file}`)
   const app = express()
 
+  //Setup processing
+  app.use(express.urlencoded())
+  app.use(express.json())
+
   app.get('/', (req, res) => {
     res.send('Express Server Runnning....')
   })

@@ -1,10 +1,6 @@
 const SOCKET_PORT = 53007
 const SERVER_PORT = 9001
 console.log('----------starting node server on 9001, websockets on 53007')
-import express from 'express'
-import fs from 'fs-extra'
-import http from 'http'
-import ws from 'ws'
 
 import ExpressServer from './ExpressServer'
 

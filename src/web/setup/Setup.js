@@ -8,7 +8,8 @@ import {
 } from '@material-ui/core'
 
 import {
- editProperty
+ editProperty,
+ saveToServer,
 } from './../reducers/SetupReducer'
 
 class Setup extends React.Component {
@@ -63,6 +64,15 @@ class Setup extends React.Component {
         <div>
           { renderTextField('server', 'Remote Server', 'ex: http://127.0.0.1:9000')}
         </div>
+        <Button
+          variant='contained'
+          color='secondary'
+          onClick={e => {
+            this.props.dispatch(saveToServer())
+          }}
+        >
+          Save
+        </Button>
       </Layout>
     )
   }

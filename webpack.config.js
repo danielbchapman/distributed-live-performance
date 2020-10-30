@@ -6,13 +6,35 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.(ts)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            plugins: [
+              "@babel/plugin-transform-runtime",
+              "@babel/plugin-proposal-class-properties"
+            ],
+            presets: [
+              "@babel/preset-env", 
+              "@babel/preset-react",
+              "@babel/preset-typescript"
+            ]
+          }
+        }
+      },
+      {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader'
-        }
+          loader: 'babel-loader',
+        },
+        enforce: 'pre',
       }
     ]
+  },
+  resolve: {
+    extensions: ['.ts', '.js', '.json']
   },
   devtool: "inline-source-map",
   devServer: {

@@ -4,6 +4,7 @@ import path from 'path'
 import {
   WEBSOCKET_SINGLETON
 } from './ExpressServer'
+
 export default (app, wss, file) => {
   
   let state = {}
@@ -35,9 +36,12 @@ export default (app, wss, file) => {
     res.json(json)
   })
 
-  app.put('/api/upload', (req, res) => {
-    //we need to do massive checks here
+  app.post('/api/upload', (req, res) => {
+    //we need to do massive checks here..then write the state
     res.json({not: 'implemented'})
+    if(wss) {
+      WEBSOCKET_SINGLETON().sendAll('replicate', {})
+    }
   })
 
   app.get('/api/currentCue', (req, res) => {
